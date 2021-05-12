@@ -3,6 +3,7 @@ package com.moses.classdiary.service;
 import com.moses.classdiary.entity.Member;
 import com.moses.classdiary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +20,11 @@ public class MemberService {
      */
     public Long signup(Member member){
         validateDuplicateMember(member);    // 중복 회원 검증
-        // 비밀번호 암호화
-
+        // 비밀번호 암호화(BCrypt 사용)
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(member.getPassword());
+        member.setPassword(encodedPassword);
+        // DB에 저장
         memberRepository.save(member);
         return member.getId();
     }
