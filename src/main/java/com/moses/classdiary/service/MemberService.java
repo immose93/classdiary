@@ -1,5 +1,6 @@
 package com.moses.classdiary.service;
 
+import com.moses.classdiary.dto.member.SignUpMemberDto;
 import com.moses.classdiary.entity.Authority;
 import com.moses.classdiary.entity.Member;
 import com.moses.classdiary.repository.MemberRepository;
@@ -20,23 +21,34 @@ public class MemberService {
 
     /**
      * 회원 가입
-     * @param member - Member 객체
-     * @return 회원 식별자(PK)
+     * @param signUpMemberDto - 회원가입 DTO
+     * @return 가입한 회원 객체
      */
     @Transactional
-    public Long signup(Member member){
+    public Member signup(SignUpMemberDto signUpMemberDto){
+        // DTO -> Member
+        Member member = new Member();
+        member.setUsername(signUpMemberDto.getUsername());
+        member.setName(signUpMemberDto.getName());
+        member.setEmail(signUpMemberDto.getEmail());
+        member.setSchoolName(signUpMemberDto.getSchoolName());
+        member.setGrade(signUpMemberDto.getGrade());
+        member.setClassNum(signUpMemberDto.getClassNum());
+        member.setActivated(true);
+
         // 이미 가입되어 있는 아이디인지 확인
         if(memberRepository.findOneWithAuthoritiesByUsername(member.getUsername()).orElse(null) != null){
             throw new RuntimeException("이미 가입되어 있는 회원입니다.");
         }
+
         // 비밀번호 암호화
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        member.setPassword(passwordEncoder.encode(signUpMemberDto.getPassword()));
+
         // 권한 설정
         member.setAuthorities(Collections.singleton(new Authority("ROLE_USER")));
-        // DB에 저장
-        memberRepository.save(member);
 
-        return member.getId();
+        // DB에 저장
+        return memberRepository.save(member);
     }
 
     /**
