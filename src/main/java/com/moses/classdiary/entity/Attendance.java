@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 public class Attendance {
     @Id @GeneratedValue
     private Long id;
-    @Temporal(TemporalType.DATE)
     private LocalDateTime date; // 출결 날짜
     @Enumerated
     private AttendanceStatus status;    // 출결 상태
