@@ -20,7 +20,16 @@ spring:
         max-page-size: 2000
 #        one-indexed-parameters: true
 
+  h2:
+    console:
+      enabled: true
+
 logging:
   level:
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace
+
+jwt:
+  header: Authorization
+  secret: Om1vc2VzLXNwcmluZy1wcm9qZWN0LWNsYXNzZGlhcnktbW9zZXMtc3ByaW5nLXByb2plY3QtY2xhc3NkaWFyeQ==
+  token-validity-in-seconds: 86400
