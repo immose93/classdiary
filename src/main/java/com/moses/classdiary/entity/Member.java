@@ -2,6 +2,8 @@ package com.moses.classdiary.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -9,10 +11,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
-public class Member {
+public class Member implements UserDetails {
 
     @Id @GeneratedValue
     private Long id;            // PK, 식별자
@@ -35,9 +38,35 @@ public class Member {
     private Integer grade;      // 학년
     private Integer classNum;   // 반
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany
     private List<Student> students = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Survey> surveys = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "member_authority")
+    private Set<Authority> authorities;
+
+    private boolean activated;  // 활성화 여부
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }
