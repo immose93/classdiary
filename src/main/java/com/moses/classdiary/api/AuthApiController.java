@@ -26,6 +26,11 @@ public class AuthApiController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+    /**
+     * 로그인 API
+     * @param loginMemberDto - 로그인 정보가 담긴 DTO
+     * @return TokenDto가 담긴 ResponseEntity
+     */
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginMemberDto loginMemberDto){
 

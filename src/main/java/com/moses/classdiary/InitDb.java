@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
 
 @Component
 @RequiredArgsConstructor
@@ -35,14 +36,14 @@ public class InitDb {
             em.persist(new Authority("ROLE_ADMIN"));
 
             Member member = new Member();
-            member.setUsername("test");
-            member.setPassword(passwordEncoder.encode("test123@"));
-            member.setName("테스트");
-            member.setEmail("test@gmail.com");
+            member.setUsername("admin");
+            member.setPassword(passwordEncoder.encode("admin123@"));
+            member.setName("관리자");
+            member.setEmail("admin@gmail.com");
             member.setSchoolName("테스트초");
             member.setGrade(5);
             member.setClassNum(3);
-            member.setAuthorities(Collections.singleton(new Authority("ROLE_USER")));
+            member.setAuthorities(new HashSet<>(Arrays.asList(new Authority("ROLE_USER"), new Authority("ROLE_ADMIN"))));
             member.setActivated(true);
             em.persist(member);
         }
