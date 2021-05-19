@@ -16,8 +16,6 @@ public class Student {
     private Gender gender;  // 성별
     @Embedded
     private Contact contact; // 연락처(학생, 비상1, 비상2)
-    @OneToMany
-    private List<Attendance> attendances;   // 출결 리스트
-    @OneToMany
-    private List<Temperature> temperatures; // 체온 리스트
+    @OneToMany(mappedBy = "student")
+    private List<Attendance> attendances;   // 출결 및 체온 리스트
 }
