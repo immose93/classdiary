@@ -11,8 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,21 +21,32 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.memberRepository = memberRepository;
     }
 
+    /**
+     * username 으로 User 불러오는 메소드
+     * @param username - 회원 아이디(Member.username 에 해당함)
+     * @return UserDetails 객체
+     * @throws UsernameNotFoundException - username 으로 찾지 못했을 경우
+     */
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(final String username) {
-        return memberRepository.findOneWithAuthoritiesByUsername(username)
-                .map(member -> createUser(username, member))
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return memberRepository.findByUsername(username)
+                .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
     }
 
-    private User createUser(String username, Member user) {
-        if(!user.isActivated()){
-            throw new RuntimeException(username + " -> 활성화되어 있지 않습니다.");
-        }
-        List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
-                .collect(Collectors.toList());
-        return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
+    /**
+     * DB에 Member 값이 존재한다면 UserDetails 객체로 만들어서 리턴하는 메소드
+     * @param member - DB에서 찾아온 Member
+     * @return UserDetails 객체
+     */
+    private UserDetails createUserDetails(Member member) {
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getAuthorities().toString());
+
+        return new User(
+                String.valueOf(member.getId()),
+                member.getPassword(),
+                Collections.singleton(grantedAuthority)
+        );
     }
 }

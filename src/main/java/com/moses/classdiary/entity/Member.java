@@ -2,7 +2,6 @@ package com.moses.classdiary.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Getter @Setter
-public class Member implements UserDetails {
+public class Member {
 
     @Id @GeneratedValue
     private Long id;            // PK, 식별자
@@ -34,26 +33,6 @@ public class Member implements UserDetails {
     private Set<Authority> authorities;
 
     private boolean activated;  // 활성화 여부
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
 
     /**
      * 학생 추가 메소드

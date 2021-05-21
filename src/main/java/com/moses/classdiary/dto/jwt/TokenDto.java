@@ -1,11 +1,14 @@
 package com.moses.classdiary.dto.jwt;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TokenDto {
-
-    private String token;
+    private String grantType;
+    private String accessToken;
+    private String refreshToken;
+    private Long accessTokenExpireTime;
 }

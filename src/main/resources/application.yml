@@ -32,4 +32,3 @@ spring:
 jwt:
   header: Authorization
   secret: Om1vc2VzLXNwcmluZy1wcm9qZWN0LWNsYXNzZGlhcnktbW9zZXMtc3ByaW5nLXByb2plY3QtY2xhc3NkaWFyeQ==
-  token-validity-in-seconds: 86400
