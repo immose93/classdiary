@@ -1,6 +1,7 @@
 package com.moses.classdiary.api;
 
 import com.moses.classdiary.dto.member.SignUpMemberDto;
+import com.moses.classdiary.dto.student.StudentDto;
 import com.moses.classdiary.entity.Member;
 import com.moses.classdiary.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +28,12 @@ public class MemberApiController {
         return ResponseEntity.ok(memberService.signup(signUpMemberDto));
     }
 
+    @PostMapping("/delete")
+    public void delete(){
+        Member member = memberService.getMyUserWithAuthorities().get();
+        memberService.delete(member);
+    }
+
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Member> getMyUserInfo(){
@@ -38,4 +46,15 @@ public class MemberApiController {
         return ResponseEntity.ok(memberService.getUserWithAuthorities(username).get());
     }
 
+    @PostMapping("/user/students")
+    public ResponseEntity<Member> setStudentsInfo(@RequestBody @Valid List<StudentDto> studentDtoList){
+        Member member = memberService.getMyUserWithAuthorities().get();
+        return ResponseEntity.ok(memberService.setStudents(member, studentDtoList));
+    }
+
+    @GetMapping("/user/students")
+    public ResponseEntity<List<StudentDto>> getStudentsInfo(){
+        Member member = memberService.getMyUserWithAuthorities().get();
+        return ResponseEntity.ok(memberService.getStudents(member));
+    }
 }

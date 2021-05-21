@@ -1,7 +1,6 @@
 package com.moses.classdiary;
 
-import com.moses.classdiary.entity.Authority;
-import com.moses.classdiary.entity.Member;
+import com.moses.classdiary.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,9 @@ public class InitDb {
 
     @PostConstruct
     public void init(){
-        initService.dbInit1();
+        initService.initAuthorities();
+        Member member = initService.initMember();
+        initService.initStudent(member);
     }
 
     @Component
@@ -30,11 +31,12 @@ public class InitDb {
         private final EntityManager em;
         private final PasswordEncoder passwordEncoder;
 
-        public  void dbInit1(){
-
+        public void initAuthorities(){
             em.persist(new Authority("ROLE_USER"));
             em.persist(new Authority("ROLE_ADMIN"));
+        }
 
+        public Member initMember(){
             Member member = new Member();
             member.setUsername("admin");
             member.setPassword(passwordEncoder.encode("admin123@"));
@@ -46,6 +48,20 @@ public class InitDb {
             member.setAuthorities(new HashSet<>(Arrays.asList(new Authority("ROLE_USER"), new Authority("ROLE_ADMIN"))));
             member.setActivated(true);
             em.persist(member);
+            return member;
+        }
+
+        public void initStudent(Member member){
+            member = em.find(Member.class,member.getId());
+            for (Integer i = 1; i <= 5; i++){
+                Student student = new Student();
+                student.setName("학생" + i);
+                student.setNumber(i);
+                student.setGender(Gender.MALE);
+                student.setContact(new Contact("010-1234-987" + i.toString(), "", ""));
+                student.setMember(member);
+                em.persist(student);
+            }
         }
     }
 }

@@ -23,10 +23,10 @@ public class Member implements UserDetails {
     private Integer grade;      // 학년
     private Integer classNum;   // 반
 
-    @OneToMany
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Student> students = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Survey> surveys = new ArrayList<>();
 
     @ManyToMany
@@ -53,5 +53,16 @@ public class Member implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+    /**
+     * 학생 추가 메소드
+     * @param student - 추가할 학생
+     */
+    public void addStudent(Student student){
+        this.students.add(student);
+        if(student.getMember() != this){
+            student.setMember(this);
+        }
     }
 }

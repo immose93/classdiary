@@ -18,12 +18,14 @@ public class AttendanceApiController {
     private final MemberService memberService;
 
     @GetMapping("/attendance")
-    public List<AttendanceDto> getAttendances(@RequestParam("id") Long id, @RequestParam("date") LocalDateTime date) {
-        return memberService.getAttendances(id, date);
+    public List<AttendanceDto> getAttendances(@RequestParam("date") LocalDateTime date) {
+        Member member = memberService.getMyUserWithAuthorities().get();
+        return memberService.getAttendances(member, date);
     }
 
     @PostMapping("/attendance")
-    public Optional<Member> setAttendance(@RequestParam("id") Long id, List<AttendanceDto> attendanceDtoList){
-        return memberService.setAttendances(id, attendanceDtoList);
+    public Optional<Member> setAttendance(List<AttendanceDto> attendanceDtoList){
+        Member member = memberService.getMyUserWithAuthorities().get();
+        return memberService.setAttendances(member, attendanceDtoList);
     }
 }
