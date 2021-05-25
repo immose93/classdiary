@@ -57,7 +57,7 @@ public class MemberService {
     public List<AttendanceDto> getAttendances(LocalDateTime date) {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
         // id로 학생 목록 가져오기
-        List<Student> students = studentRepository.findStudentsByMember(member);
+        List<Student> students = studentRepository.findStudentsByMemberOrderByNumber(member);
         // 번호순 정렬
         students.sort(Comparator.comparing(Student::getNumber));
         // 학생 id와 date로 해당 날짜 출결 상태 가져오기
@@ -125,7 +125,7 @@ public class MemberService {
     public List<StudentDto> getStudents() {
         log.info("SecurityContext current username : " + SecurityUtil.getCurrentMemberId());
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
-        List<Student> findStudents = studentRepository.findStudentsByMember(member);
+        List<Student> findStudents = studentRepository.findStudentsByMemberOrderByNumber(member);
         return findStudents.stream()
                 .map(s -> new StudentDto(s.getNumber(), s.getName(), s.getGender(), s.getContact()))
                 .collect(Collectors.toList());
