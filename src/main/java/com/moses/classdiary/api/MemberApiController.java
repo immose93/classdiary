@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class MemberApiController {
     private final MemberService memberService;
 
@@ -28,7 +28,7 @@ public class MemberApiController {
      * 현재 로그인 된 정보 조회 API
      * @return MemberResponseDto 가 담긴 ResponseEntity
      */
-    @GetMapping("/user")
+    @GetMapping("/")
     //@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<MemberResponseDto> getMyMemberInfo(){
         return ResponseEntity.ok(memberService.getMyInfo());
@@ -39,7 +39,7 @@ public class MemberApiController {
      * @param username - 조회하려는 회원의 아이디
      * @return - 회원 정보
      */
-    @GetMapping("/user/{username}")
+    @GetMapping("/{username}")
     //@PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<MemberResponseDto> getMemberInfo(@PathVariable String username){
         return ResponseEntity.ok(memberService.getMemberInfo(username));
@@ -50,7 +50,7 @@ public class MemberApiController {
      * @param studentDtoList - 학생 정보
      * @return 반 학생들 정보
      */
-    @PostMapping("/user/students")
+    @PostMapping("/students")
     public ResponseEntity<List<StudentDto>> setStudentsInfo(@RequestBody @Valid List<StudentDto> studentDtoList){
         memberService.setStudents(studentDtoList);
         return ResponseEntity.ok(memberService.getStudents());
@@ -60,7 +60,7 @@ public class MemberApiController {
      * 반 학생들 정보 조회 API
      * @return 반 학생들 정보
      */
-    @GetMapping("/user/students")
+    @GetMapping("/students")
     public ResponseEntity<List<StudentDto>> getStudentsInfo(){
         return ResponseEntity.ok(memberService.getStudents());
     }
