@@ -1,6 +1,8 @@
 package com.moses.classdiary;
 
 import com.moses.classdiary.entity.*;
+import com.moses.classdiary.repository.StudentRepository;
+import com.moses.classdiary.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -8,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class InitDb {
         initService.initAuthorities();
         Member member = initService.initMember();
         initService.initStudent(member);
+        initService.initSurvey(member);
     }
 
     @Component
@@ -30,6 +35,8 @@ public class InitDb {
     static class InitService {
         private final EntityManager em;
         private final PasswordEncoder passwordEncoder;
+        private final StudentRepository studentRepository;
+        private final SurveyRepository surveyRepository;
 
         public void initAuthorities(){
             em.persist(new Authority("ROLE_USER"));
@@ -52,7 +59,7 @@ public class InitDb {
         }
 
         public void initStudent(Member member){
-            member = em.find(Member.class,member.getId());
+            List<Student> students = new ArrayList<>();
             for (Integer i = 1; i <= 5; i++){
                 Student student = new Student();
                 student.setName("학생" + i);
@@ -60,8 +67,24 @@ public class InitDb {
                 student.setGender(Gender.MALE);
                 student.setContact(new Contact("010-1234-987" + i.toString(), "", ""));
                 student.setMember(member);
-                em.persist(student);
+                students.add(student);
             }
+            studentRepository.saveAll(students);
+        }
+
+        public void initSurvey(Member member) {
+            List<Survey> surveys = new ArrayList<>();
+            List<Student> students = studentRepository.findStudentsByMemberOrderByNumber(member);
+
+            for (Integer i = 1; i <= 3; i++) {
+                Survey survey = new Survey(member, "안내장" + i);
+                for (Student student : students) {
+                    survey.getSubmissionInfos().add(new SubmissionInfo(student.getNumber(), student.getName(), false));
+                }
+                surveys.add(survey);
+            }
+
+            surveyRepository.saveAll(surveys);
         }
     }
 }
