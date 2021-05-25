@@ -64,4 +64,14 @@ public class MemberApiController {
     public ResponseEntity<List<StudentDto>> getStudentsInfo(){
         return ResponseEntity.ok(memberService.getStudents());
     }
+
+    /**
+     * 학생 추가 API
+     * @param studentDto - 추가할 학생 DTO
+     * @return 추가 후 학생 목록
+     */
+    @PostMapping("/student/add")
+    public ResponseEntity<List<StudentDto>> addStudent(@RequestBody @Valid StudentDto studentDto) {
+        return ResponseEntity.ok(memberService.addStudent(studentDto));
+    }
 }

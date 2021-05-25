@@ -127,7 +127,7 @@ public class MemberService {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
         List<Student> findStudents = studentRepository.findStudentsByMemberOrderByNumber(member);
         return findStudents.stream()
-                .map(s -> new StudentDto(s.getNumber(), s.getName(), s.getGender(), s.getContact()))
+                .map(StudentDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -137,5 +137,25 @@ public class MemberService {
     @Transactional
     public void delete() {
         memberRepository.deleteById(SecurityUtil.getCurrentMemberId());
+    }
+
+    /**
+     * 학생 추가 메소드
+     * @param studentDto - 추가할 학생 DTO
+     * @return 추가 후 학생 목록
+     */
+    public List<StudentDto> addStudent(StudentDto studentDto) {
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
+        Student student = new Student(
+                studentDto.getName(),
+                studentDto.getNumber(),
+                studentDto.getGender(),
+                studentDto.getContact(),
+                member
+        );
+        studentRepository.save(student);
+        return studentRepository.findStudentsByMemberOrderByNumber(member).stream()
+                .map(StudentDto::new)
+                .collect(Collectors.toList());
     }
 }

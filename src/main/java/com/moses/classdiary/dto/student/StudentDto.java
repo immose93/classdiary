@@ -2,14 +2,13 @@ package com.moses.classdiary.dto.student;
 
 import com.moses.classdiary.entity.Contact;
 import com.moses.classdiary.entity.Gender;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.moses.classdiary.entity.Student;
+import lombok.*;
 
 import javax.persistence.Embedded;
 import javax.persistence.Enumerated;
 
-@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentDto {
@@ -19,4 +18,11 @@ public class StudentDto {
     private Gender gender;  // 성별
     @Embedded
     private Contact contact;// 연락처(학생, 비상1, 비상2)
+
+    public StudentDto(Student student) {
+        this.number = student.getNumber();
+        this.name = student.getName();
+        this.gender = student.getGender();
+        this.contact = student.getContact();
+    }
 }
