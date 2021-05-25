@@ -1,6 +1,7 @@
 package com.moses.classdiary;
 
 import com.moses.classdiary.entity.*;
+import com.moses.classdiary.repository.AttendanceRepository;
 import com.moses.classdiary.repository.StudentRepository;
 import com.moses.classdiary.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,6 +29,7 @@ public class InitDb {
         Member member = initService.initMember();
         initService.initStudent(member);
         initService.initSurvey(member);
+        initService.initAttendance(member);
     }
 
     @Component
@@ -37,6 +40,7 @@ public class InitDb {
         private final PasswordEncoder passwordEncoder;
         private final StudentRepository studentRepository;
         private final SurveyRepository surveyRepository;
+        private final AttendanceRepository attendanceRepository;
 
         public void initAuthorities(){
             em.persist(new Authority("ROLE_USER"));
@@ -85,6 +89,16 @@ public class InitDb {
             }
 
             surveyRepository.saveAll(surveys);
+        }
+
+        public void initAttendance(Member member) {
+            List<Attendance> attendances = new ArrayList<>();
+            List<Student> students = studentRepository.findStudentsByMemberOrderByNumber(member);
+            for (Student student : students) {
+                Attendance attendance = new Attendance(student, LocalDate.now());
+                attendances.add(attendance);
+            }
+            attendanceRepository.saveAll(attendances);
         }
     }
 }

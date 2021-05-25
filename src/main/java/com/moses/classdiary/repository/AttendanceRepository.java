@@ -1,12 +1,11 @@
 package com.moses.classdiary.repository;
 
 import com.moses.classdiary.entity.Attendance;
-import com.moses.classdiary.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
-    Optional<Attendance> findByStudentAndDate(Student student, LocalDateTime dateTime);
+    List<Attendance> findAllByMemberIdAndDate(Long memberId, LocalDate dateTime);
 }

@@ -25,7 +25,7 @@ public class Student {
     @JoinColumn(name = "MEMBER_ID")
     @JsonIgnore
     private Member member; // 담임 선생님
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attendance> attendances;   // 출결 및 체온 리스트
 
     public Student(String name, Integer number, Gender gender, Contact contact, Member member) {
