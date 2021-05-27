@@ -1,6 +1,7 @@
 package com.moses.classdiary.api;
 
 import com.moses.classdiary.dto.member.MemberResponseDto;
+import com.moses.classdiary.dto.member.MemberUpdateDto;
 import com.moses.classdiary.dto.student.StudentDto;
 import com.moses.classdiary.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,25 @@ public class MemberApiController {
     //@PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<MemberResponseDto> getMemberInfo(@PathVariable String username){
         return ResponseEntity.ok(memberService.getMemberInfo(username));
+    }
+
+    /**
+     * 회원 정보 수정 조회 API
+     * @return 수정할 회원 정보 DTO
+     */
+    @GetMapping("/update")
+    public ResponseEntity<MemberUpdateDto> getUpdateMemberInfo() {
+        return ResponseEntity.ok(memberService.getUpdateMemberInfo());
+    }
+
+    /**
+     * 회원 정보 수정 API
+     * @param memberUpdateDto - 수정할 회원 정보가 담긴 DTO
+     * @return 받았던 DTO 그대로 리턴
+     */
+    @PostMapping("/update")
+    public ResponseEntity<MemberUpdateDto> updateMember(@RequestBody @Valid MemberUpdateDto memberUpdateDto) {
+        return ResponseEntity.ok(memberService.updateMember(memberUpdateDto));
     }
 
     /**

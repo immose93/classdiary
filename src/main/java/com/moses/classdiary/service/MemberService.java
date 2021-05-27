@@ -1,15 +1,16 @@
 package com.moses.classdiary.service;
 
 import com.moses.classdiary.dto.member.MemberResponseDto;
+import com.moses.classdiary.dto.member.MemberUpdateDto;
 import com.moses.classdiary.dto.student.StudentDto;
 import com.moses.classdiary.entity.Member;
 import com.moses.classdiary.entity.Student;
-import com.moses.classdiary.repository.AttendanceRepository;
 import com.moses.classdiary.repository.MemberRepository;
 import com.moses.classdiary.repository.StudentRepository;
 import com.moses.classdiary.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +23,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * username 을 기준으로 Member 를 가져오는 메소드
@@ -119,5 +120,42 @@ public class MemberService {
         return studentRepository.findStudentsByMemberOrderByNumber(member).stream()
                 .map(StudentDto::new)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 회원 수정 정보 조회 메소드
+     * @return 수정을 위한 회원 정보 DTO
+     */
+    @Transactional(readOnly = true)
+    public MemberUpdateDto getUpdateMemberInfo() {
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
+        // 비밀번호는 ""로 보냄
+        return new MemberUpdateDto(member);
+    }
+
+    /**
+     * 회원 정보 수정 메소드
+     * @param memberUpdateDto - 수정할 내용이 담긴 회원 정보 DTO
+     * @return 받았던 DTO 그대로 리턴
+     */
+    @Transactional
+    public MemberUpdateDto updateMember(MemberUpdateDto memberUpdateDto) {
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
+
+        // 수정 불가능한 항목 수정 시 예외처리
+        if (!member.getUsername().equals(memberUpdateDto.getUsername())){
+            throw new RuntimeException("회원 ID는 변경이 불가능합니다.");
+        } else if (!member.getName().equals(memberUpdateDto.getName())) {
+            throw new RuntimeException("회원 이름은 변경이 불가능합니다.");
+        }
+
+        // 수정 반영 (변경 감지로 DB에 반영됨)
+        member.setPassword(passwordEncoder.encode(memberUpdateDto.getPassword()));
+        member.setEmail(memberUpdateDto.getEmail());
+        member.setSchoolName(memberUpdateDto.getSchoolName());
+        member.setGrade(memberUpdateDto.getGrade());
+        member.setClassNum(memberUpdateDto.getClassNum());
+
+        return memberUpdateDto;
     }
 }
