@@ -2,6 +2,7 @@ package com.moses.classdiary;
 
 import com.moses.classdiary.entity.*;
 import com.moses.classdiary.repository.AttendanceRepository;
+import com.moses.classdiary.repository.LessonRepository;
 import com.moses.classdiary.repository.StudentRepository;
 import com.moses.classdiary.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class InitDb {
         initService.initStudent(member);
         initService.initSurvey(member);
         initService.initAttendance(member);
+        initService.initTimetable(member);
     }
 
     @Component
@@ -41,6 +43,7 @@ public class InitDb {
         private final StudentRepository studentRepository;
         private final SurveyRepository surveyRepository;
         private final AttendanceRepository attendanceRepository;
+        private final LessonRepository lessonRepository;
 
         public void initAuthorities(){
             em.persist(new Authority("ROLE_USER"));
@@ -99,6 +102,27 @@ public class InitDb {
                 attendances.add(attendance);
             }
             attendanceRepository.saveAll(attendances);
+        }
+
+        public void initTimetable(Member member) {
+            List<Lesson> lessons = new ArrayList<>();
+            List<String> subjectTitles = new ArrayList<>();
+            subjectTitles.add("수학");
+            subjectTitles.add("영어");
+            subjectTitles.add("국어");
+            subjectTitles.add("과학");
+            subjectTitles.add("사회");
+            subjectTitles.add("체육");
+            subjectTitles.add("음악");
+            subjectTitles.add("");
+            int cnt = 0;
+
+            for (int i = 1; i <= 5; i++) {
+                for (int j = 1; j <= 6; j++) {
+                    lessons.add(new Lesson(member, "기초", i, j, subjectTitles.get(cnt++%8)));
+                }
+            }
+            lessonRepository.saveAll(lessons);
         }
     }
 }
