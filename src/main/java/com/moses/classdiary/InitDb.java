@@ -1,10 +1,7 @@
 package com.moses.classdiary;
 
 import com.moses.classdiary.entity.*;
-import com.moses.classdiary.repository.AttendanceRepository;
-import com.moses.classdiary.repository.LessonRepository;
-import com.moses.classdiary.repository.StudentRepository;
-import com.moses.classdiary.repository.SurveyRepository;
+import com.moses.classdiary.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -32,6 +29,7 @@ public class InitDb {
         initService.initSurvey(member);
         initService.initAttendance(member);
         initService.initTimetable(member);
+        initService.initPerformanceAssessment(member);
     }
 
     @Component
@@ -44,6 +42,7 @@ public class InitDb {
         private final SurveyRepository surveyRepository;
         private final AttendanceRepository attendanceRepository;
         private final LessonRepository lessonRepository;
+        private final PerformanceAssessmentRepository performanceAssessmentRepository;
 
         public void initAuthorities(){
             em.persist(new Authority("ROLE_USER"));
@@ -126,6 +125,15 @@ public class InitDb {
                 }
             }
             lessonRepository.saveAll(lessons);
+        }
+
+        public void initPerformanceAssessment(Member member) {
+            List<Student> students = studentRepository.findStudentsByMemberOrderByNumber(member);
+            List<PerformanceAssessment> performanceAssessmentList = new ArrayList<>();
+            for (Student student : students) {
+                performanceAssessmentList.add(new PerformanceAssessment("수학 1차 수행", member, student, PerformanceAssessment.Grade.UNKNOWN));
+            }
+            performanceAssessmentRepository.saveAll(performanceAssessmentList);
         }
     }
 }

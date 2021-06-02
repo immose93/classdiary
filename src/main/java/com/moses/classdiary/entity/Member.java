@@ -28,6 +28,12 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Survey> surveys = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonMemo> lessonMemos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerformanceAssessment> performanceAssessments = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(name = "member_authority")
     private Set<Authority> authorities;
