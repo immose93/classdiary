@@ -90,6 +90,7 @@ public class PerformanceAssessmentService {
      * @param title - 삭제할 평가 항목 이름
      * @return 삭제 후 평가 항목 이름 리스트
      */
+    @Transactional
     public List<String> deletePerformanceAssessment(String title) {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
         performanceAssessmentRepository.deleteAllByMemberAndTitle(member, title);
