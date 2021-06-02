@@ -12,11 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Attendance {
     @Id @GeneratedValue
-    private Long id;
+    private Long id;        // 출결 식별자 (PK)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STUDENT_ID")
-    private Student student;
-    private Long memberId;
+    private Student student;    // 학생 (FK)
+    private Long memberId;  // 회원 식별자
     private LocalDate date; // 출결 날짜
     @Enumerated
     private AttendanceStatus status;    // 출결 상태

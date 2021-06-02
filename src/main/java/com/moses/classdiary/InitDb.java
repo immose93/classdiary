@@ -114,11 +114,14 @@ public class InitDb {
             subjectTitles.add("사회");
             subjectTitles.add("체육");
             subjectTitles.add("음악");
-            subjectTitles.add("");
             int cnt = 0;
 
             for (int i = 1; i <= 5; i++) {
                 for (int j = 1; j <= 6; j++) {
+                    if (cnt % 8 == 7) {
+                        cnt++;
+                        continue;
+                    }
                     lessons.add(new Lesson(member, "기초", i, j, subjectTitles.get(cnt++%8)));
                 }
             }
