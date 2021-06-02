@@ -3,6 +3,7 @@ package com.moses.classdiary.service;
 import com.moses.classdiary.dto.timetable.TimetableDto;
 import com.moses.classdiary.entity.Lesson;
 import com.moses.classdiary.entity.Member;
+import com.moses.classdiary.repository.LessonMemoRepository;
 import com.moses.classdiary.repository.LessonRepository;
 import com.moses.classdiary.repository.MemberRepository;
 import com.moses.classdiary.util.SecurityUtil;
@@ -18,6 +19,7 @@ import java.util.List;
 public class TimetableService {
     private final LessonRepository lessonRepository;
     private final MemberRepository memberRepository;
+    private final LessonMemoRepository lessonMemoRepository;
     private static final int MIN_PERIOD = 0;
     private static final int MAX_PERIOD = 5;
     private static final int MONDAY = 0;
@@ -54,6 +56,13 @@ public class TimetableService {
                         }
                         // 해당 시간에 다른 수업으로 수정되는 경우 (변경 감지로 DB에 적용)
                         lesson.setSubjectTitle(subjectTitle);
+
+                        // 사라진 수업에 대한 수업기록 삭제
+                        if (!lesson.getSubjectTitle().equals(subjectTitle)) {
+                            lessonMemoRepository.deleteAllByMemberAndSubjectTitleAndDayAndPeriod(
+                                    member, lesson.getSubjectTitle(), lesson.getDay(), lesson.getPeriod()
+                            );
+                        }
                         break;
                     }
                 }
